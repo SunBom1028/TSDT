@@ -3,6 +3,9 @@ from selenium.webdriver.common.keys import Keys
 import time
 from selenium.webdriver.common.by import By
 from django.test import LiveServerTestCase
+from selenium.common.exceptions import WebDriverException
+
+MAX_WAIT=10  #(1)
 
 class NewVisitorTest(LiveServerTestCase):
 
@@ -13,9 +16,17 @@ class NewVisitorTest(LiveServerTestCase):
         self.browser.quit()
 
     def check_for_row_in_list_table(self,row_text):
-        table=self.browser.find_element(By.ID,'id_list_table')
-        rows=table.find_elements(By.TAG_NAME,'tr')
-        self.assertIn(row_text,[row.text for row in rows])
+        start_time=time.time()
+        while True:  #(2)
+            try:
+                table=self.browser.find_element(By.ID,'id_list_table')
+                rows=table.find_elements(By.TAG_NAME,'tr')
+                self.assertIn(row_text,[row.text for row in rows])
+                return  #(4)
+            except(AssertionError,WebDriverException)as e:  #(5)
+                if time.time()-start_time>MAX_WAIT:  #(6)
+                    raise e  #(6)
+                time.sleep(0.5)  #(5)
 
     def test_can_start_a_list_and_retrieve_it_later(self):
         #张三听说有一个在线待办事项的应用
@@ -24,23 +35,22 @@ class NewVisitorTest(LiveServerTestCase):
 
         #他注意到网页里包含To-Do这个词
         self.assertIn('To-Do',self.browser.title)
-        header_text=self.browser.find_element(By.TAG_NAME,'h1').text  #(1)
+        header_text=self.browser.find_element(By.TAG_NAME,'h1').text  
         self.assertIn('To-Do',header_text)
 
         #有一个输入待办事项的文本输入框
-        inputbox=self.browser.find_element(By.ID,'id_new_item')  #(1)
+        inputbox=self.browser.find_element(By.ID,'id_new_item')  
         self.assertEqual(
             inputbox.get_attribute('placeholder'),
             'Enter a to-do item'
             )
 
         #输入了Buy flowers
-        inputbox.send_keys('Buy flowers')  #(2)
+        inputbox.send_keys('Buy flowers')  
 
         #按了回车，页面更新了
         #待办事项列表中显示了1：Buy flowers
-        inputbox.send_keys(Keys.ENTER)  #(3)
-        time.sleep(1)  #(4)
+        inputbox.send_keys(Keys.ENTER)  
         self.check_for_row_in_list_table('1: Buy flowers')
 
         #页面中又出现了一个文本输入框，可以输入其他待办事项
@@ -48,7 +58,6 @@ class NewVisitorTest(LiveServerTestCase):
         inputbox=self.browser.find_element(By.ID,'id_new_item')
         inputbox.send_keys('Give a gift to Lisi')
         inputbox.send_keys(Keys.ENTER)
-        time.sleep(1)
 
         #页面再次更新，清单上显示两个待办事项
         self.check_for_row_in_list_table('1: Buy flowers')
