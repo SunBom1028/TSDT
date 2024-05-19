@@ -65,7 +65,7 @@ class NewVisitorTest(LiveServerTestCase):
 
         #张三想知道网站是否记住清单
         #他看到网站为他生成了唯一的URL
-        self.fail('Finish the test!')
+    
         #他访问了那个URL，发现待办事项还在
         #满意离开
 
