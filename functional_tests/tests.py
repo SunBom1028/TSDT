@@ -79,7 +79,7 @@ class NewVisitorTest(LiveServerTestCase):
 
         #他注意到清单有个唯一的URL
         zhangsan_list_url=self.browser.current_url
-        self.assertRegex(zhangsan_list_url,'/list/.+')  #(1)
+        self.assertRegex(zhangsan_list_url,'/lists/.+')  #(1)
 
         #现在一个用户王五访问网站
         #我们用一个新浏览器会话
@@ -97,12 +97,12 @@ class NewVisitorTest(LiveServerTestCase):
         #王五输入一个新待办事项，新建一个清单
         inputbox=self.browser.find_element(By.ID,'id_new_item')
         inputbox.send_keys('Buy milk')
-        inputbox.senf_keys(Kyes.ENTER)
+        inputbox.send_keys(Keys.ENTER)
         self.wait_for_row_in_list_table('1: Buy milk')
 
         #王五获得了他唯一的URL
         wangwu_list_url=self.browser.current_url
-        self.assertRegex(wangwu_list_url,'/list/.+')
+        self.assertRegex(wangwu_list_url,'/lists/.+')
         self.assertNotEqual(wangwu_list_url,zhangsan_list_url)
 
         #这个页面还是没有张三的清单
