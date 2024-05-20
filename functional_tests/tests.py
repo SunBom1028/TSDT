@@ -2,12 +2,12 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import time
 from selenium.webdriver.common.by import By
-from django.test import LiveServerTestCase
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.common.exceptions import WebDriverException
 
 MAX_WAIT=10  #(1)
 
-class NewVisitorTest(LiveServerTestCase):
+class NewVisitorTest(StaticLiveServerTestCase):
 
     def setUp(self):
         self.browser = webdriver.Chrome()
@@ -128,7 +128,7 @@ class NewVisitorTest(LiveServerTestCase):
         #他新建一个清单，看到输入框仍然完美的居中
         inputbox.send_keys('testing')
         inputbox.send_keys(Keys.ENTER)
-        self.wait_for_row_in_list_table('1:testing')
+        self.wait_for_row_in_list_table('1: testing')
         inputbox=self.browser.find_element(By.ID,'id_new_item')
         self.assertAlmostEqual(
             inputbox.location['x']+inputbox.size['width']/2,
