@@ -11,6 +11,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
     def setUp(self):
         self.browser = webdriver.Chrome()
+        self.live_server_url='http://123.57.49.180'
 
     def tearDown(self):
         self.browser.quit()
