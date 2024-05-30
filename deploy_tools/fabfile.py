@@ -4,7 +4,7 @@ import random
 REPO_URL='http://github.com/SunBom1028/TSDT.git'
 
 def deploy():
-    site_folder=f'/home/{env.user}/sites/{env.host}'
+    site_folder=f'/home/sun/sites/{env.host}'
     source_folder=site_folder+'/source'
     _create_directory_structure_if_necessary(site_folder)
     _get_latest_source(source_folder)
@@ -48,13 +48,13 @@ def _update_virtualenv(source_folder):
 def _update_static_files(source_folder):
     run(
         f'cd {source_folder}' 
-        ' && /venv/bin/python manage.py collectstatic --noinput'
+        ' && ./venv/bin/python manage.py collectstatic --noinput'
     )
 
 def _update_database(source_folder):
     run(
         f'cd {source_folder}'
-        ' && /venv/bin/python manage.py migrate --noinput'
+        ' && ./venv/bin/python manage.py migrate --noinput'
     )
 if __name__=="__main__":
     local('fab -f /path/fabfile.py deploy')
